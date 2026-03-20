@@ -86,13 +86,7 @@ sudo ldconfig
 
 Acesse a aba **Configurações** e preencha:
 
-| Campo   | Valor                                              |
-|---------|-----------------------------------------------------|
-| Host    | `172.30.1.32`                                      |
-| Porta   | `1521`                                             |
-| Serviço | `pdb_tasyhml.subnetdb.vcnprod.oraclevcn.com`       |
-| Usuário | `tasy`                                             |
-| Senha   | *(fornecida pelo setor de TI)*                     |
+
 
 ---
 
