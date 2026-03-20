@@ -1,0 +1,24 @@
+{
+  "name": "zebra-etiquetas-hospitalares",
+  "version": "1.0.0",
+  "description": "Sistema de impressão de etiquetas hospitalares - Zebra ZD220/ZD230",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "nodemon backend/server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "bcryptjs": "^2.4.3",
+    "oracledb": "^6.3.0",
+    "dotenv": "^16.3.1",
+    "connect-sqlite3": "^0.9.13",
+    "better-sqlite3": "^9.4.3",
+    "helmet": "^7.1.0",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Etiquetas Hospitalares — Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green: #00c853;
+      --green-dim: #00873a;
+      --bg: #0a0f0a;
+      --surface: #111a11;
+      --surface2: #162016;
+      --border: #1e2e1e;
+      --text: #d4e8d4;
+      --text-dim: #6a8a6a;
+      --red: #ff4444;
+      --font: 'IBM Plex Sans', sans-serif;
+      --mono: 'IBM Plex Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Grid de fundo */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,200,83,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,200,83,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+
+    /* Brilho central */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      height: 400px;
+      background: radial-gradient(ellipse, rgba(0,200,83,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .login-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 48px 40px;
+      width: 380px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .login-box::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--green), transparent);
+    }
+
+    .logo-area {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .logo-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px;
+      height: 56px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      margin-bottom: 16px;
+    }
+
+    .logo-icon svg { width: 28px; height: 28px; }
+
+    .logo-title {
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .logo-sub {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--green);
+      margin-top: 4px;
+      opacity: 0.7;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 6px;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 14px;
+      padding: 10px 14px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    input:focus {
+      border-color: var(--green-dim);
+    }
+
+    input::placeholder { color: var(--text-dim); opacity: 0.5; }
+
+    .btn-login {
+      width: 100%;
+      background: var(--green);
+      color: #000;
+      border: none;
+      border-radius: 3px;
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 12px;
+      cursor: pointer;
+      margin-top: 24px;
+      transition: background 0.15s, opacity 0.15s;
+    }
+
+    .btn-login:hover { background: #00e060; }
+    .btn-login:active { opacity: 0.8; }
+    .btn-login:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .erro-msg {
+      background: rgba(255,68,68,0.1);
+      border: 1px solid rgba(255,68,68,0.3);
+      border-radius: 3px;
+      color: var(--red);
+      font-size: 12px;
+      padding: 8px 12px;
+      margin-top: 12px;
+      display: none;
+    }
+
+    .versao {
+      position: fixed;
+      bottom: 16px;
+      right: 20px;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text-dim);
+      opacity: 0.4;
+    }
+  </style>
+</head>
+<body>
+
+<div class="login-box">
+  <div class="logo-area">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#00c853" stroke-width="1.5">
+        <rect x="3" y="3" width="18" height="18" rx="2"/>
+        <path d="M7 12h10M9 8l-2 4 2 4M15 8l2 4-2 4"/>
+      </svg>
+    </div>
+    <div class="logo-title">Etiquetas Hospitalares</div>
+    <div class="logo-sub">Zebra ZD220 / ZD230</div>
+  </div>
+
+  <form id="formLogin">
+    <div class="field">
+      <label>Usuário</label>
+      <input type="text" id="login" name="login" placeholder="login" autocomplete="username" required>
+    </div>
+    <div class="field">
+      <label>Senha</label>
+      <input type="password" id="senha" name="senha" placeholder="••••••••" autocomplete="current-password" required>
+    </div>
+
+    <div class="erro-msg" id="erroMsg"></div>
+
+    <button type="submit" class="btn-login" id="btnLogin">Entrar</button>
+  </form>
+</div>
+
+<div class="versao">v1.0.0 · TASY</div>
+
+<script>
+  document.getElementById('formLogin').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('btnLogin');
+    const erroEl = document.getElementById('erroMsg');
+    erroEl.style.display = 'none';
+    btn.disabled = true;
+    btn.textContent = 'Autenticando...';
+
+    try {
+      const resp = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          login: document.getElementById('login').value.trim(),
+          senha: document.getElementById('senha').value
+        })
+      });
+      const data = await resp.json();
+      if (data.ok) {
+        window.location.href = '/';
+      } else {
+        erroEl.textContent = data.error || 'Erro ao autenticar';
+        erroEl.style.display = 'block';
+      }
+    } catch (e) {
+      erroEl.textContent = 'Falha de conexão com o servidor';
+      erroEl.style.display = 'block';
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'Entrar';
+  });
+</script>
+</body>
+</html>

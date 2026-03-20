@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Etiquetas Hospitalares</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-logo">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="2" y="2" width="16" height="16" rx="2"/>
+        <path d="M6 10h8M8 7l-2 3 2 3M12 7l2 3-2 3"/>
+      </svg>
+    </div>
+    <span class="topbar-title">Etiquetas Hospitalares</span>
+  </div>
+  <nav class="topbar-nav">
+    <button class="nav-btn active" data-tab="busca">Busca / Impressão</button>
+    <button class="nav-btn" data-tab="modelos">Modelos</button>
+    <button class="nav-btn" data-tab="impressoras">Impressoras</button>
+    <button class="nav-btn" data-tab="logs">Logs</button>
+    <button class="nav-btn" data-tab="config">Configurações</button>
+  </nav>
+  <div class="topbar-right">
+    <span class="user-badge" id="userBadge">—</span>
+    <button class="btn-logout" id="btnLogout" title="Sair">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3M10 11l3-3-3-3M13 8H6"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<!-- MAIN CONTENT -->
+<main class="main-content">
+
+  <!-- ─── TAB: BUSCA / IMPRESSÃO ─────────────────────────────── -->
+  <section class="tab-panel active" id="tab-busca">
+    <div class="panel-grid">
+
+      <!-- Coluna esquerda: busca -->
+      <div class="panel-col">
+        <div class="card">
+          <div class="card-header">Buscar Paciente</div>
+          <div class="card-body">
+
+            <div class="search-mode-tabs">
+              <button class="mode-btn active" data-mode="atendimento">Por Atendimento</button>
+              <button class="mode-btn" data-mode="nome">Por Nome</button>
+            </div>
+
+            <div id="busca-atendimento" class="busca-form">
+              <div class="input-group">
+                <input type="text" id="inputAtendimento" placeholder="Nº do atendimento" class="input-lg">
+                <button class="btn-primary" id="btnBuscarAtendimento">Buscar</button>
+              </div>
+            </div>
+
+            <div id="busca-nome" class="busca-form" style="display:none">
+              <div class="input-group">
+                <input type="text" id="inputNome" placeholder="Nome do paciente (mín. 3 letras)">
+                <button class="btn-primary" id="btnBuscarNome">Buscar</button>
+              </div>
+              <div id="resultadosNome" class="lista-pacientes"></div>
+            </div>
+
+            <div id="busca-loading" class="loading-state" style="display:none">
+              <div class="spinner"></div>
+              <span>Consultando TASY...</span>
+            </div>
+
+            <div id="busca-erro" class="alert-erro" style="display:none"></div>
+          </div>
+        </div>
+
+        <!-- Dados do paciente -->
+        <div class="card" id="cardPaciente" style="display:none">
+          <div class="card-header">
+            Dados do Paciente
+            <button class="btn-icon-sm" id="btnLimpar" title="Limpar">✕</button>
+          </div>
+          <div class="card-body" id="dadosPaciente"></div>
+        </div>
+      </div>
+
+      <!-- Coluna direita: impressão -->
+      <div class="panel-col">
+        <div class="card" id="cardImpressao">
+          <div class="card-header">Imprimir Etiqueta</div>
+          <div class="card-body">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Modelo de Etiqueta</label>
+                <select id="selModelo" class="select-styled">
+                  <option value="">Carregando...</option>
+                </select>
+              </div>
+              <div class="form-group form-group-sm">
+                <label>Cópias</label>
+                <input type="number" id="inputCopias" value="1" min="1" max="10" class="input-sm">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Impressora</label>
+              <select id="selImpressora" class="select-styled">
+                <option value="">Selecione a impressora...</option>
+              </select>
+            </div>
+
+            <!-- Preview ZPL via Labelary -->
+            <div class="preview-area" id="previewArea">
+              <div class="preview-placeholder">
+                <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1">
+                  <rect x="4" y="8" width="32" height="24" rx="2"/>
+                  <path d="M10 16h20M10 22h14M10 28h8"/>
+                </svg>
+                <span>Selecione um paciente para preview</span>
+              </div>
+              <img id="previewImg" src="" alt="Preview etiqueta" style="display:none; width:100%; border-radius:3px;">
+              <div class="preview-loading" id="previewLoading" style="display:none">
+                <div class="spinner"></div>
+              </div>
+            </div>
+
+            <div class="btn-row">
+              <button class="btn-secondary" id="btnPreview">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 8s3-5 7-5 7 5 7 5-3 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2"/></svg>
+                Preview
+              </button>
+              <button class="btn-success" id="btnImprimir" disabled>
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4V2h8v2M4 12H2V7a2 2 0 012-2h8a2 2 0 012 2v5h-2M4 9h8v5H4V9z"/></svg>
+                Imprimir
+              </button>
+            </div>
+
+            <div id="impressao-status" class="status-msg" style="display:none"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─── TAB: MODELOS ──────────────────────────────────────── -->
+  <section class="tab-panel" id="tab-modelos">
+    <div class="card">
+      <div class="card-header">
+        Modelos de Etiqueta
+        <button class="btn-primary btn-sm" id="btnNovoModelo">+ Novo Modelo</button>
+      </div>
+      <div class="card-body" id="listaModelos"></div>
+    </div>
+
+    <!-- Editor de modelo -->
+    <div class="card" id="cardEditorModelo" style="display:none">
+      <div class="card-header">
+        <span id="editorModeloTitulo">Novo Modelo</span>
+        <button class="btn-icon-sm" id="btnFecharEditor">✕</button>
+      </div>
+      <div class="card-body">
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Nome do Modelo</label>
+            <input type="text" id="modeloNome" placeholder="Ex: Etiqueta UTI">
+          </div>
+          <div class="form-group">
+            <label>Descrição</label>
+            <input type="text" id="modeloDesc" placeholder="Opcional">
+          </div>
+          <div class="form-group">
+            <label>Largura (mm)</label>
+            <input type="number" id="modeloLargura" value="100">
+          </div>
+          <div class="form-group">
+            <label>Altura (mm)</label>
+            <input type="number" id="modeloAltura" value="30">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Template ZPL
+            <span class="label-hint">Variáveis: {{NOME}} {{PRONTUARIO}} {{ATENDIMENTO}} {{MAE}} {{SEXO}} {{DATA_NASCIMENTO}} {{LEITO}} {{CLINICA}}</span>
+          </label>
+          <textarea id="modeloZPL" class="textarea-mono" rows="14" placeholder="^XA&#10;...&#10;^XZ"></textarea>
+        </div>
+        <div class="btn-row">
+          <label class="checkbox-row">
+            <input type="checkbox" id="modeloPadrao"> Definir como padrão
+          </label>
+          <button class="btn-primary" id="btnSalvarModelo">Salvar Modelo</button>
+        </div>
+        <div id="modelo-status" class="status-msg" style="display:none"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── TAB: IMPRESSORAS ──────────────────────────────────── -->
+  <section class="tab-panel" id="tab-impressoras">
+    <div class="card">
+      <div class="card-header">
+        Impressoras Cadastradas
+        <button class="btn-primary btn-sm" id="btnNovaImpressora">+ Nova Impressora</button>
+      </div>
+      <div class="card-body" id="listaImpressoras"></div>
+    </div>
+
+    <div class="card" id="cardEditorImpressora" style="display:none">
+      <div class="card-header">
+        <span id="editorImpTitulo">Nova Impressora</span>
+        <button class="btn-icon-sm" id="btnFecharEditorImp">✕</button>
+      </div>
+      <div class="card-body">
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Nome / Identificação</label>
+            <input type="text" id="impNome" placeholder="Ex: Recepção Principal">
+          </div>
+          <div class="form-group">
+            <label>Setor</label>
+            <input type="text" id="impSetor" placeholder="Ex: UTI / Emergência">
+          </div>
+          <div class="form-group">
+            <label>Endereço IP</label>
+            <input type="text" id="impIP" placeholder="192.168.1.100">
+          </div>
+          <div class="form-group">
+            <label>Porta TCP</label>
+            <input type="number" id="impPorta" value="9100">
+          </div>
+          <div class="form-group">
+            <label>Modelo</label>
+            <select id="impModelo" class="select-styled">
+              <option value="ZD220">ZD220</option>
+              <option value="ZD230">ZD230</option>
+              <option value="ZD421">ZD421</option>
+              <option value="ZT230">ZT230</option>
+            </select>
+          </div>
+        </div>
+        <input type="hidden" id="impEditId">
+        <div class="btn-row">
+          <button class="btn-secondary" id="btnTestarImpressora">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>
+            Testar Conexão
+          </button>
+          <button class="btn-primary" id="btnSalvarImpressora">Salvar</button>
+        </div>
+        <div id="imp-status" class="status-msg" style="display:none"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── TAB: LOGS ────────────────────────────────────────── -->
+  <section class="tab-panel" id="tab-logs">
+    <div class="card">
+      <div class="card-header">
+        Log de Impressões
+        <span id="logTotal" class="badge-count"></span>
+      </div>
+      <div class="card-body">
+        <table class="data-table" id="tabelaLogs">
+          <thead>
+            <tr>
+              <th>Data/Hora</th>
+              <th>Usuário</th>
+              <th>Atendimento</th>
+              <th>Paciente</th>
+              <th>Impressora</th>
+              <th>Modelo</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="logsBody"></tbody>
+        </table>
+        <button class="btn-secondary btn-sm" id="btnCarregarMaisLogs" style="margin-top:12px">Carregar mais</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── TAB: CONFIGURAÇÕES ───────────────────────────────── -->
+  <section class="tab-panel" id="tab-config">
+    <div class="card">
+      <div class="card-header">Conexão com Banco Oracle (TASY)</div>
+      <div class="card-body">
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Host / IP do Servidor</label>
+            <input type="text" id="cfgHost" placeholder="172.30.1.32">
+          </div>
+          <div class="form-group">
+            <label>Porta</label>
+            <input type="number" id="cfgPorta" value="1521">
+          </div>
+          <div class="form-group">
+            <label>Serviço / SID</label>
+            <input type="text" id="cfgServico" placeholder="pdb_tasyhml.subnetdb...">
+          </div>
+          <div class="form-group">
+            <label>Usuário</label>
+            <input type="text" id="cfgUsuario" placeholder="tasy">
+          </div>
+          <div class="form-group">
+            <label>Senha <span class="label-hint">(deixe em branco para manter a atual)</span></label>
+            <input type="password" id="cfgSenha" placeholder="••••••••">
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn-secondary" id="btnTestarBanco">Testar Conexão</button>
+          <button class="btn-primary" id="btnSalvarBanco">Salvar Configuração</button>
+        </div>
+        <div id="banco-status" class="status-msg" style="display:none"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">Alterar Senha</div>
+      <div class="card-body">
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label>Senha Atual</label>
+            <input type="password" id="senhaAtual">
+          </div>
+          <div class="form-group">
+            <label>Nova Senha</label>
+            <input type="password" id="novaSenha">
+          </div>
+        </div>
+        <button class="btn-primary" id="btnAlterarSenha">Alterar Senha</button>
+        <div id="senha-status" class="status-msg" style="display:none"></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="/js/app.js"></script>
+</body>
+</html>
